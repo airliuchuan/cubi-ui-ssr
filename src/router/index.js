@@ -8,6 +8,23 @@ export default new Router({
   base: '/dist/',
   routes: [
     {
+      path: '/login',
+      name: 'login',
+      component: () => import('@/views/login/login.vue'),
+      children: [
+        {
+          path: 'protocol',
+          name: 'protocol',
+          component: () => import('@/views/login/protocol.vue')
+        }
+      ]
+    },
+    {
+      path: '/signup',
+      name: 'signup',
+      component: () => import('@/views/signup/signup.vue')
+    },
+    {
       path: '/',
       component: () => import('@/layout/tab.vue'),
       children: [
@@ -53,7 +70,15 @@ export default new Router({
         {
           path: 'cart',
           name: 'cart',
-          component: () => import('@/views/cart-page/cart-page.vue')
+          component: () => import('@/views/cart-page/cart-page.vue'),
+          beforeEnter (to, from, next) {
+            let user
+            if (user) {
+              next()
+            } else {
+              next({path: '/login'})
+            }
+          }
         },
         {
           path: 'user',

@@ -3,6 +3,7 @@
 // see http://vuejs-templates.github.io/webpack for documentation.
 
 const path = require('path')
+const host = require('../app.config').cdn.host
 
 module.exports = {
   dev: {
@@ -55,7 +56,8 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/dist/',
+    // assetsPublicPath: '/dist/',
+    assetsPublicPath: host, // 上传cdn
 
     /**
      * Source Maps

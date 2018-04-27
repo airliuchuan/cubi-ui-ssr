@@ -68,25 +68,7 @@
         <div class="topic-queen">
           <h3>颜值Queen</h3>
         </div>
-        <div class="queen-goods-list">
-          <ul>
-            <li class="good-item" v-for="(item,index) in items" :key="index" @click="toDetail(item.id)">
-              <div class="good-banner">
-                <img :src="item.image" alt="">
-              </div>
-              <div class="good-desc">
-                <div class="good-desc-top">
-                  <h3>{{item.title}}</h3>
-                  <span>{{item.price | price}}</span>
-                </div>
-                <div class="good-desc-bottom">
-                  <span>{{item.summary}}</span>
-                  <cube-button :inline="true">立即剁手</cube-button>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </div>
+        <product-list :data="items" @pushTo="toDetail"></product-list>
       </cube-scroll>
     </div>
     <transition mode="out-in" name="slide">
@@ -95,8 +77,12 @@
   </div>
 </template>
 <script>
+import ProductList from '@/components/product-list/product-list.vue'
 export default {
   name: 'home-page',
+  components: {
+    ProductList
+  },
   data () {
     return {
       slides: [
@@ -262,45 +248,6 @@ export default {
       color: #9f9f9f
       font-weight: 700
       font-size: 16px
-  .queen-goods-list
-    width: 100%
-    .good-item
-      margin-bottom: 10px
-      background: #f8f8f8
-      .good-desc
-        padding: 10px 15px
-        .good-desc-top
-          display: flex
-          justify-content: space-between
-          margin-bottom: 5px
-          &>span
-            font-size: 15px
-            color: #bd1d21
-            font-weight: 900
-          h3
-            font-size: 18px
-            color: #000
-            font-weight: 900
-        .good-desc-bottom
-          display: flex
-          justify-content: space-between
-          align-items: center
-          flex-wrap: nowrap
-          &>span
-            overflow: hidden
-            text-overflow: ellipsis
-            white-space: nowrap
-            font-size: 13px
-          .cube-btn
-            background: #bd1d21
-      .good-banner
-        width: 100%
-        img
-          width: 100%
-.slide-enter-active, .slide-leave-active
-    transition: all 0.3s
-.slide-enter, .slide-leave-to
-  transform: translate3d(100%, 0, 0)
 .rotate:after
   content: '松开刷新'
 .pull:after
