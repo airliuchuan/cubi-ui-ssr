@@ -6,7 +6,8 @@ export const user = [{
   'mobile': '17413284681',
   'code': '1234',
   'integral': 11111,
-  'Grades': '总监',
+  'grades': '总监',
+  'settleCount': 1,
   'image': 'http://p5vssvuk7.bkt.clouddn.com/WechatIMG5.jpeg'
 }]
 

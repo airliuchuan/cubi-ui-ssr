@@ -7,7 +7,7 @@ export default {
   bootstrap () {
     let mock = new MockAdapter(axios, {delayResponse: 1000})
 
-    mock.onPost('/api/login').reply(config => {
+    mock.onPost('/user/login').reply(config => {
       let {mobile, code} = JSON.parse(config.data)
       return new Promise((resolve, reject) => {
         let user = null
@@ -28,7 +28,21 @@ export default {
           } else {
             resolve([200, {succ: false, msg: '账号和密码错误'}])
           }
-        }, 100)
+        })
+      })
+    })
+    mock.onPost('/user/logincount').reply(config => {
+      let {settleCount, mobile} = JSON.parse(config.data)
+      console.log(settleCount, 'api-37')
+      return new Promise((resolve, reject) => {
+        mockData.user.forEach(u => {
+          if (u.mobile === mobile) {
+            u.settleCount = settleCount
+            resolve([200, {succ: true, msg: '修改成功', data: u}])
+          } else {
+            resolve([200, {succ: false, msg: '修改失败'}])
+          }
+        })
       })
     })
   }

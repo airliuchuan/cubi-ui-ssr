@@ -15,24 +15,29 @@
           v-for="(item, index) in group.items"
           :key="index"
           :item="item">
-          <div class="cart-item">
-            <div class="cart-item-left" @click="changeItem(item.id)">
-              <input type="checkbox" :checked="item.checked" @change="categoryChange" >
-            </div>
-            <div class="cart-item-middle">
-              <img :src="item.image" alt="">
-            </div>
-            <div class="cart-item-right">
-              <h3>{{item.name}}</h3>
-              <span>{{item.summary}}</span>
-              <div class="pay">
-                <span class="price">{{item.price | price}}</span>
-                <div class="quantity">
-                  <span @click="editorCart('minus', item)">—</span>
-                  <span class="quantity-num">{{item.quantity}}</span>
-                  <span @click="editorCart('add', item)">+</span>
+          <div class="cart-item-slider">
+            <div class="cart-item" @touchstart.capture="touchStart" @touchend.capture="touchEnd" data-type="0">
+              <div class="cart-item-left" @click="changeItem(item.id)">
+                <input type="checkbox" :checked="item.checked" @change="categoryChange" >
+              </div>
+              <div class="cart-item-middle">
+                <img :src="item.image" alt="">
+              </div>
+              <div class="cart-item-right">
+                <h3>{{item.name}}</h3>
+                <span>{{item.summary}}</span>
+                <div class="pay">
+                  <span class="price">{{item.price | price}}</span>
+                  <div class="quantity">
+                    <span @click="editorCart('minus', item)">—</span>
+                    <span class="quantity-num">{{item.quantity}}</span>
+                    <span @click="editorCart('add', item)">+</span>
+                  </div>
                 </div>
               </div>
+            </div>
+            <div class="cart-del-btn">
+              <span>删除</span>
             </div>
           </div>
         </cube-index-list-item>
@@ -63,7 +68,9 @@
 <script>
 import {
   mapState,
-  mapMutations
+  mapMutations,
+  mapActions,
+  mapGetters
 } from 'vuex'
 const cartData = [
   {
@@ -162,16 +169,30 @@ export default {
   name: 'cart-page',
   data () {
     return {
+      // 滑动删除
+      startX: 0,
+      endX: 0,
       cartData: cartData, // 商品数据
       selectAll: false, // 是否全选
       settlePrice: 0 // 结算钱数
     }
   },
   computed: {
-    ...mapState(['settleCount'])
+    ...mapState(['settleCount']),
+    ...mapGetters(['getLocalUser'])
   },
   methods: {
+    // 滑动开始
+    touchStart (e) {
+      this.startX = e.touches[0].clientX
+    },
+    touchEnd (e) {
+      let silderItem = e.currentTarget
+      console.log(silderItem)
+      this.endx = e.changedTouches[0].clientX
+    },
     ...mapMutations(['doSettleCount']),
+    ...mapActions(['userUpdateCount']),
     // 修改数量
     editorCart (editorType, product) {
       if (editorType === 'minus') {
@@ -278,6 +299,14 @@ export default {
       })
       this.settlePrice = sumPrice
       this.doSettleCount(sumNum)
+      // 这里需要更新user数据的settleCount
+      if (sumNum !== this.getLocalUser.settleCount) {
+        this.userUpdateCount({
+          mobile: this.getLocalUser.mobile,
+          settleCount: sumNum
+        })
+      }
+
       sumPrice = 0
       sumNum = 0
     }
@@ -295,6 +324,20 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.cart-item-slider
+  position: relative
+  .cart-del-btn
+    position: absolute
+    width: 50px
+    height: 100%
+    display: flex
+    align-items: center
+    justify-content: center
+    background-color: red
+    color: #fff
+    top: 0
+    right: 0
+    z-index: -1
 .cart-wrap
   position: absolute
   top: 0

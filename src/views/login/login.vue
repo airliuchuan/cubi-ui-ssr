@@ -40,7 +40,10 @@
 </transition>
 </template>
 <script>
-import {mapActions} from 'vuex'
+import {
+  mapActions,
+  mapMutations
+} from 'vuex'
 export default {
   data () {
     return {
@@ -81,12 +84,14 @@ export default {
     onChecked () {
       this.checked = !this.checked
     },
+    ...mapMutations(['doSettleCount']),
     _login () {
       let userinfo = {
         mobile: this.mobile,
         code: this.code
       }
-      this.login(userinfo).then(() => {
+      this.login(userinfo).then((val) => {
+        this.doSettleCount(val.settleCount)
         // 账号密码正确resolved
         if (this.$route.query.redirect) {
           console.log(this.$route.query.redirect)

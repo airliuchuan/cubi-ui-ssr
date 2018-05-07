@@ -9,12 +9,23 @@ export default {
         console.log(data, 'actions - 7')
         commit('doLogin', data)
         commit('endLoading')
-        resolve()
+        resolve(data)
       }).catch(err => {
         commit('endLoading')
         handleError(err)
         reject(err)
       })
+    })
+  },
+  userUpdateCount ({commit}, {mobile, settleCount}) {
+    commit('startLoading')
+    model.userUpdateCount(mobile, settleCount).then(data => {
+      console.log(data, 'actions - 23')
+      commit('doLogin', data)
+      commit('endLoading')
+    }).catch(err => {
+      commit('endLoading')
+      handleError(err)
     })
   }
 }
