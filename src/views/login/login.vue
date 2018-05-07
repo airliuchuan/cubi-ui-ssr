@@ -21,7 +21,7 @@
         <router-link to="/login/protocol" tag="span" class="protocol-user">《用户协议》</router-link>
       </div>
       <div class="login-btn">
-        <button>登录</button>
+        <button @click="_login">登录</button>
       </div>
       <router-link to="/signup" replace tag="div" class="toSignup">
         <span>注&nbsp;&nbsp;册 ></span>
@@ -40,6 +40,7 @@
 </transition>
 </template>
 <script>
+import {mapActions} from 'vuex'
 export default {
   data () {
     return {
@@ -72,9 +73,36 @@ export default {
       }
     }
   },
+  computed: {
+
+  },
   methods: {
+    ...mapActions(['login']),
     onChecked () {
       this.checked = !this.checked
+    },
+    _login () {
+      let userinfo = {
+        mobile: this.mobile,
+        code: this.code
+      }
+      this.login(userinfo).then(() => {
+        // 账号密码正确resolved
+        if (this.$route.query.redirect) {
+          console.log(this.$route.query.redirect)
+          this.$router.replace(this.$route.query.redirect)
+        } else {
+          this.$router.replace('/')
+        }
+      }, () => {
+        // 账号密码错误, rejected
+        const toast = this.$createToast({
+          time: 1000,
+          type: 'error',
+          txt: '账号密码错误'
+        })
+        toast.show()
+      })
     }
   }
 }

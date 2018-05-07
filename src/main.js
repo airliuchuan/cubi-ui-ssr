@@ -27,12 +27,19 @@ import {
   Slide,
   IndexList,
   Swipe,
-  Upload
+  Upload,
+  createApi
 } from 'cube-ui'
+
 import App from './App'
 import router from './router'
+import store from './store'
 
 import './assets/stylus/index.styl'
+import Mock from './mock'
+
+// cube-ui弹出层
+createApi(Vue, Toast, [], true)
 
 Vue.use(Button)
 Vue.use(CheckboxGroup)
@@ -58,14 +65,34 @@ Vue.use(Swipe)
 Vue.use(Upload)
 
 Vue.config.productionTip = false
+
+// 价格的过滤器 => 过滤规则: 1. 必须是number格式2. 不能小于0
 Vue.filter('price', value => {
-  if (!value) return
+  if (value < 0 || typeof value !== 'number') return
   value = value.toString()
-  return `¥${value}.00`
+  return `¥ ${value}.00`
 })
+
+// 登录拦截
+router.beforeEach((to, from, next) => {
+  console.log(store.state.user, '--store-user')
+  if (to.meta.requireLogin && !store.getters.getLocalUser) {
+    next({
+      path: '/login',
+      query: {redirect: to.fullPath}
+    })
+  } else {
+    next()
+  }
+})
+
+// MockAdatper初始化
+Mock.bootstrap()
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 })

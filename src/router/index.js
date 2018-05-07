@@ -3,14 +3,16 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+const isDev = process.env.NODE_ENV === 'development'
+
 export default new Router({
   mode: 'history',
-  base: '/dist/',
+  base: isDev ? '' : '/dist/',
   routes: [
     {
       path: '/login',
       name: 'login',
-      component: () => import('@/views/login/login.vue'),
+      component: () => import(/* webpackChunkName: 'login' */ '@/views/login/login.vue'),
       children: [
         {
           path: 'protocol',
@@ -59,6 +61,11 @@ export default new Router({
               name: 'product-detail',
               props: true,
               component: () => import('@/views/home-page/product-detail/product-detail.vue')
+            },
+            {
+              path: 'search',
+              name: 'search',
+              component: () => import('@/views/home-page/search/search.vue')
             }
           ]
         },
@@ -71,13 +78,8 @@ export default new Router({
           path: 'cart',
           name: 'cart',
           component: () => import('@/views/cart-page/cart-page.vue'),
-          beforeEnter (to, from, next) {
-            let user
-            if (user) {
-              next()
-            } else {
-              next({path: '/login'})
-            }
+          meta: {
+            requireLogin: true
           }
         },
         {

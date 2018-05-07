@@ -1,12 +1,26 @@
 <template>
   <div>
+    <div class="home-search" v-show="searchShow">
+      <div class="search-mask" ref="searchMask"></div>
+      <div class="search-scan">
+        <span class="iconfont icon-scan1"></span>
+      </div>
+      <div class="search-input">
+        <input type="text" @click="searcHandle" placeholder="闺蜜颜值新品">
+      </div>
+      <div class="search-message">
+        <span class="iconfont icon-messagexinxi"></span>
+      </div>
+    </div>
     <div class="scroll-wrap">
       <cube-scroll
         ref="scroll"
         :data="items"
         :options="options"
+        :listenScroll="true"
         @pulling-down="onPullingDown"
         @pulling-up="onPullingUp"
+        @scroll="onScroll"
       >
       <template slot="pulldown" slot-scope="props">
         <div
@@ -104,28 +118,28 @@ export default {
           id: 1,
           title: 'Q+时焕青春抚痕精华液1',
           summary: '预售4月30日发货】皱纹的小熨斗 青春的防腐剂',
-          price: '268',
+          price: 268,
           image: 'http://p5vssvuk7.bkt.clouddn.com/product.jpg'
         },
         {
           id: 2,
           title: 'Q+时焕青春抚痕精华液2',
           summary: '预售4月30日发货】皱纹的小熨斗 青春的防腐剂',
-          price: '268',
+          price: 268,
           image: 'http://p5vssvuk7.bkt.clouddn.com/product.jpg'
         },
         {
           id: 3,
           title: 'Q+时焕青春抚痕精华液3',
           summary: '预售4月30日发货】皱纹的小熨斗 青春的防腐剂',
-          price: '268',
+          price: 268,
           image: 'http://p5vssvuk7.bkt.clouddn.com/product.jpg'
         },
         {
           id: 4,
           title: 'Q+时焕青春抚痕精华液4',
           summary: '预售4月30日发货】皱纹的小熨斗 青春的防腐剂',
-          price: '268',
+          price: 268,
           image: 'http://p5vssvuk7.bkt.clouddn.com/product.jpg'
         }
       ],
@@ -143,10 +157,26 @@ export default {
           }
         }
       },
-      num: 0
+      searchShow: true
     }
   },
   methods: {
+    searcHandle () {
+      this.$router.push('/home/search')
+    },
+    onScroll (pox) {
+      let searchOpa = Math.abs(pox.y / 50)
+      if ((pox.y / 50) > 0) {
+        this.searchShow = false
+        return
+      } else {
+        this.searchShow = true
+      }
+      if (searchOpa >= 1) {
+        searchOpa = 1
+      }
+      this.$refs.searchMask.style.opacity = searchOpa
+    },
     onPullingDown () {
       setTimeout(() => {
         if (Math.random() > 0.5) {
@@ -184,6 +214,37 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
+.home-search
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 50px
+  display: flex
+  align-items: center
+  justify-content: space-between
+  z-index: 1
+  .search-mask
+    position: absolute
+    width: 100%
+    height: 100%
+    background: #f1f1f1
+    z-index: -1
+    opacity: 0
+  span
+    font-size: 20px
+    margin: 0 5px
+  .search-input
+    width: 100%
+    height: 25px
+    border-radius: 5px
+    overflow: hidden
+    opacity: 0.7
+    input
+      background-color: #ccc
+      width: 100%
+      height: 100%
+      text-align: center
 .scroll-wrap
   position: fixed
   top: 0
