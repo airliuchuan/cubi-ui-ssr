@@ -16,7 +16,7 @@
           :key="index"
           :item="item">
           <div class="cart-item-slider">
-            <div class="cart-item" @touchstart.capture="touchStart" @touchend.capture="touchEnd" data-type="0">
+            <div class="cart-item" @touchstart.capture="touchStart" @touchmove.capture="touchMove" @touchend.capture="touchEnd" data-type="0">
               <div class="cart-item-left" @click="changeItem(item.id)">
                 <input type="checkbox" :checked="item.checked" @change="categoryChange" >
               </div>
@@ -171,7 +171,7 @@ export default {
     return {
       // 滑动删除
       startX: 0,
-      endX: 0,
+      slider: 0,
       cartData: cartData, // 商品数据
       selectAll: false, // 是否全选
       settlePrice: 0 // 结算钱数
@@ -186,10 +186,22 @@ export default {
     touchStart (e) {
       this.startX = e.touches[0].clientX
     },
+    touchMove (e) {
+      this.sliderItem = e.currentTarget
+      this.slider = e.touches[0].pageX - this.startX
+      if (this.slider < 0 && this.slider < -50) {
+        this.slider = -50
+      } else if (this.slider >= 0) {
+        this.slider = 0
+      }
+      this.sliderItem.style.transform = `translate3d(${this.slider}px, 0, 0)`
+    },
     touchEnd (e) {
-      let silderItem = e.currentTarget
-      console.log(silderItem)
-      this.endx = e.changedTouches[0].clientX
+      if (this.slider <= -25) {
+        this.sliderItem.style.transform = `translate3d(-50px, 0, 0)`
+      } else {
+        this.sliderItem.style.transform = `translate3d(0, 0, 0)`
+      }
     },
     ...mapMutations(['doSettleCount']),
     ...mapActions(['userUpdateCount']),
@@ -337,7 +349,7 @@ export default {
     color: #fff
     top: 0
     right: 0
-    z-index: -1
+    z-index: 1
 .cart-wrap
   position: absolute
   top: 0
@@ -445,10 +457,14 @@ export default {
           transform: translate(-50%, -48%) scale(0.73)
           vertical-align: middle
   .cart-item
+    position: relative
+    z-index: 2
+    background: #fff
     display: flex
     align-items: center
     padding: 5px 10px 5px 5px
     border-bottom: 1px solid #ccc
+    transition: all 0.3s
     .cart-item-left
       height: 80px
       line-height:80px
