@@ -24,5 +24,13 @@ export default {
 }
 </script>
 <style lang="stylus" scoped>
-
+.userinfo
+  display: flex
+  .userinfo-ava
+    width: 80px
+    height: 80px
+    border-radius: 50%
+    img
+      width: 100%
+      height: 100%
 </style>
